@@ -10,11 +10,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Sorting<Integer> integerSorting = new Sorting<Integer>(16);
 
-        Integer[] testArray1 = generateIntegerArray(10);
+        Integer[] testArray1 = generateIntegerArray(50);
         printIntegerArray(testArray1);
-        integerSorting.sort(testArray1);
+        Sorting<Integer> integerSorting = new Sorting<>(testArray1, 16);
+        integerSorting.compute();
         printIntegerArray(testArray1);
     }
 
@@ -28,7 +28,7 @@ public class Main {
         Integer[] array = new Integer[size];
 
         for (int i = 0; i < size; i++) {
-            array[i] = random.nextInt();
+            array[i] = random.nextInt(5);
         }
 
         System.out.printf("Random array of size %d has been generated.\n", size);
