@@ -1,4 +1,3 @@
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
@@ -108,14 +107,5 @@ public class Sorting<T extends Comparable<? super T>> extends RecursiveAction {
                 }
             }
         }
-    }
-
-
-    private void printIntegerArray(T[] array) {
-        for (int i = 0; i < array.length-1; i++) {
-            System.out.print(array[i] + " --> ");
-        }
-
-        System.out.println(array[array.length-1]);
     }
 }
