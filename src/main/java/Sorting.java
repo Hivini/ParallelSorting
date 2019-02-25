@@ -1,8 +1,6 @@
-import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
-import java.util.concurrent.RecursiveTask;
 
 /**
  * @author Jorge Vinicio Quintero Santos
@@ -10,9 +8,9 @@ import java.util.concurrent.RecursiveTask;
  * @date Feb/23/2019
  * @comments None
  */
-public class Sorting<T extends Comparable<T>> extends RecursiveAction {
+public class Sorting<T extends Comparable<? super T>> extends RecursiveAction {
 
-    private T[] array;
+    private final T[] array;
     private int threshold;
     private int leftPointer;
     private int rightPointer;
@@ -29,31 +27,75 @@ public class Sorting<T extends Comparable<T>> extends RecursiveAction {
     }
 
     protected void compute() {
-        if ((rightPointer-leftPointer) + 1 <= threshold) {
-            // To be more efficient it is better to use insertion sort based on a threshold
-            // The best threshold its said to be 16, but for the sake of this activity we will receive it as an input
-            insertionSort(array, leftPointer, rightPointer);
-        } else {
-            Sorting<T> leftPart = new Sorting<>(array, threshold, leftPointer, rightPointer / 2);
-            Sorting<T> rightPart = new Sorting<>(array, threshold, rightPointer / 2 + 1, rightPointer);
+        if (leftPointer < rightPointer) {
+            if (rightPointer-leftPointer <= threshold) {
+                // To be more efficient it is better to use insertion sort based on a threshold
+                // The best threshold its said to be 16, but for the sake of this activity we will receive it as an input
+                insertionSort(this.array, this.leftPointer, this.rightPointer);
+            } else {
+                int middle = (rightPointer + leftPointer) / 2;
+                Sorting<T> leftPart = new Sorting<>(array, threshold, leftPointer, middle);
+                Sorting<T> rightPart = new Sorting<>(array, threshold, middle+1, rightPointer);
+                // Do all the splitting
+                ForkJoinTask.invokeAll(leftPart, rightPart);
+                // Do all the merge
+                merge(this.array, middle, this.leftPointer, this.rightPointer);
+            }
+        }
 
-            ForkJoinTask.invokeAll(leftPart, rightPart);
-            merge(leftPart.leftPointer, rightPart.leftPointer);
+    }
+
+    private void merge(T[] array, int middle, int leftPointer, int rightPointer) {
+        // Establish the sizes because they are going to be used a lot
+        int sizeLeft = (middle - leftPointer) + 1;
+        int sizeRight = rightPointer - middle;
+
+        T[] leftArray = (T[]) new Comparable[sizeLeft];
+        T[] rightArray = (T[]) new Comparable[sizeRight];
+
+        // Copy the elements to compare them later
+        for (int i = 0; i < sizeLeft; i++) {
+            leftArray[i] = array[leftPointer + i];
+        }
+
+        for (int i = 0; i < sizeRight; i++) {
+            rightArray[i] = array[middle + 1 + i];
+        }
+
+        // Make the pointers for the generic arrays
+        int i = 0, j = 0;
+        // Make a pointer to the original array
+        int originalIndex = leftPointer;
+
+        // Copy the elements to the original array
+        while (i < sizeLeft && j < sizeRight) {
+
+            if (leftArray[i].compareTo(rightArray[j]) <= 0) {
+                array[originalIndex++] = leftArray[i++];
+            } else {
+                array[originalIndex++] = rightArray[j++];
+            }
+        }
+
+        // Copy the rest of the elements
+        while (i < sizeLeft) {
+            array[originalIndex++] = leftArray[i++];
+        }
+
+        while (j < sizeRight) {
+            array[originalIndex++] = rightArray[j++];
         }
     }
 
-    private void merge(int pointer1, int pointer2) {
-        int originalLeft = pointer1;
-        int originalRight = pointer2;
 
-        System.out.println("This run");
-    }
-
-
+    /**
+     * A basic implementation of the Insertion Sort, this will be used when the split of the merge sort reaches the
+     * given threshold.
+     */
     private void insertionSort(T[] array, int leftPointer, int rightPointer) {
-        for (int i = 0; i < rightPointer; i++) {
+        for (int i = leftPointer; i <= rightPointer; i++) {
             // We always check the left side of the array
-            for (int y = i; y >= 0; y--) {
+            for (int y = i - 1; y >= leftPointer; y--) {
                 // Check if the element to right is greater to the one in the left
                 if (array[y + 1].compareTo(array[y]) < 0) {
                     // Do a simple swap
@@ -61,10 +103,19 @@ public class Sorting<T extends Comparable<T>> extends RecursiveAction {
                     array[y + 1] = array[y];
                     array[y] = temp;
                 } else {
-                    // If the element on the left is less than the number on the irght, It means is already sorted
+                    // If the element on the left is less than the number on the right, It means is already sorted
                     break;
                 }
             }
         }
+    }
+
+
+    private void printIntegerArray(T[] array) {
+        for (int i = 0; i < array.length-1; i++) {
+            System.out.print(array[i] + " --> ");
+        }
+
+        System.out.println(array[array.length-1]);
     }
 }

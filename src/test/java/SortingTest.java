@@ -1,27 +1,34 @@
+import org.junit.jupiter.api.Test;
+
 import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
 
 /**
  * @author Jorge Vinicio Quintero Santos
- * @className Main
- * @date Feb/23/2019
+ * @className SortingTest
+ * @date Feb/24/2019
  * @comments None
  */
-public class Main {
+public class SortingTest {
 
-    public static void main(String[] args) {
-
-
-
-        Integer[] testArray1 = generateIntegerArray(1000000);
+    @Test
+    public static void checkIntegerArray(Integer[] array) {
+        Integer[] testArray1 = generateIntegerArray(100);
 
         //Integer[] testArray1 = {87, 35, 67, 60, 2};
-        //printIntegerArray(testArray1);
+        printIntegerArray(testArray1);
 
         ForkJoinPool pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() - 1);
-        pool.invoke(new Sorting<>(testArray1, 100));
+        pool.invoke(new Sorting<>(testArray1, 16));
 
-        //printIntegerArray(testArray1);
+        printIntegerArray(testArray1);
+
+        for (int i = 0; i < array.length-1; i++) {
+            if (array[i + 1].compareTo(array[i]) < 0) {
+                System.out.println("No sirve");
+                break;
+            }
+        }
     }
 
 
@@ -48,4 +55,6 @@ public class Main {
 
         System.out.println(array[array.length-1]);
     }
+
+
 }
