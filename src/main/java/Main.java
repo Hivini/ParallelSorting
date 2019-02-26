@@ -20,16 +20,16 @@ public class Main {
 
 
         // 4000 data
-        runMergeTest(testArray1);
+        runParallelMergeTest(testArray1);
 
         // 10000 data
-        runMergeTest(testArray2);
+        runParallelMergeTest(testArray2);
 
         // 100000 data
-        runMergeTest(testArray3);
+        runParallelMergeTest(testArray3);
 
         // 1000000 data
-        runMergeTest(testArray4);
+        runParallelMergeTest(testArray4);
 
         checkIfSorted(testArray1);
         checkIfSorted(testArray2);
