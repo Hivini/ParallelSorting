@@ -29,7 +29,6 @@ public class Sorting<T extends Comparable<? super T>> extends RecursiveAction {
         if (leftPointer < rightPointer) {
             if (rightPointer-leftPointer <= threshold) {
                 // To be more efficient it is better to use insertion sort based on a threshold
-                // The best threshold its said to be 16, but for the sake of this activity we will receive it as an input
                 insertionSort(this.array, this.leftPointer, this.rightPointer);
             } else {
                 int middle = (rightPointer + leftPointer) / 2;

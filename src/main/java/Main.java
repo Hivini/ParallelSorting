@@ -18,19 +18,24 @@ public class Main {
         Integer[] testArray3 = generateIntegerArray(100000);
         Integer[] testArray4 = generateIntegerArray(1000000);
 
-
         // 4000 data
+        System.out.println("\n---------------- 4000 DATA -------------------\n");
         runParallelMergeTest(testArray1);
 
         // 10000 data
+        System.out.println("\n---------------- 10000 DATA -------------------\n");
         runParallelMergeTest(testArray2);
 
         // 100000 data
+        System.out.println("\n---------------- 100000 DATA -------------------\n");
         runParallelMergeTest(testArray3);
 
         // 1000000 data
+        System.out.println("\n---------------- 1000000 DATA -------------------\n");
         runParallelMergeTest(testArray4);
 
+
+        System.out.println();
         checkIfSorted(testArray1);
         checkIfSorted(testArray2);
         checkIfSorted(testArray3);
@@ -62,24 +67,35 @@ public class Main {
         stopWatch.stop();
         System.out.printf("Parallel Merge with %d data and %d threshold was duration was: %d miliseconds\n", testArray.length, 1, stopWatch.getTime());
         stopWatch.reset();
+        checkIfSorted(testArray);
+        generateIntegerArray(testArray);
+        System.out.println();
 
         stopWatch.start();
         pool.invoke(new Sorting<>(testArray, 16));
         stopWatch.stop();
         System.out.printf("Parallel Merge with %d data and %d threshold was duration was: %d miliseconds\n", testArray.length, 16, stopWatch.getTime());
         stopWatch.reset();
+        checkIfSorted(testArray);
+        generateIntegerArray(testArray);
+        System.out.println();
 
         stopWatch.start();
         pool.invoke(new Sorting<>(testArray, 100));
         stopWatch.stop();
         System.out.printf("Parallel Merge with %d data and %d threshold was duration was: %d miliseconds \n", testArray.length, 100, stopWatch.getTime());
         stopWatch.reset();
+        checkIfSorted(testArray);
+        generateIntegerArray(testArray);
+        System.out.println();
 
         stopWatch.start();
         pool.invoke(new Sorting<>(testArray, 500));
         stopWatch.stop();
         System.out.printf("Parallel Merge with %d data and %d threshold was duration was: %d miliseconds\n", testArray.length, 500, stopWatch.getTime());
         stopWatch.reset();
+        checkIfSorted(testArray);
+        System.out.println();
     }
 
 
@@ -92,16 +108,28 @@ public class Main {
         Integer[] array = new Integer[size];
 
         for (int i = 0; i < size; i++) {
-            array[i] = random.nextInt(100);
+            array[i] = random.nextInt();
         }
 
         System.out.printf("Random array of size %d has been generated.\n", size);
         return array;
     }
 
+    private static void generateIntegerArray(Integer[] testArray) {
+        Random random = new Random();
+
+        for (int i = 0; i < testArray.length; i++) {
+            testArray[i] = random.nextInt();
+        }
+
+        System.out.printf("Random array of size %d has been regenerated.\n", testArray.length);
+    }
+
+
+
     private static void printIntegerArray(Integer[] array) {
-        for (int i = 0; i < array.length-1; i++) {
-            System.out.print(array[i] + " --> ");
+        for (int i = 0; i < array.length; i++) {
+            System.out.print(array[i] + " --> \n");
         }
 
         System.out.println(array[array.length-1]);
