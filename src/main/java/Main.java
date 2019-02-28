@@ -2,6 +2,7 @@ import javafx.scene.paint.Stop;
 import org.apache.commons.lang.time.StopWatch;
 import java.util.Random;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 
 /**
  * @author Jorge Vinicio Quintero Santos
@@ -63,9 +64,18 @@ public class Main {
         StopWatch stopWatch = new StopWatch();
 
         stopWatch.start();
+        mergeSort(testArray);
+        stopWatch.stop();
+        System.out.printf("*** Normal Merge Sort with %d data duration was: %d milliseconds\n", testArray.length, stopWatch.getTime());
+        stopWatch.reset();
+        checkIfSorted(testArray);
+        generateIntegerArray(testArray);
+        System.out.println();
+
+        stopWatch.start();
         pool.invoke(new Sorting<>(testArray, 1));
         stopWatch.stop();
-        System.out.printf("Parallel Merge with %d data and %d threshold was duration was: %d miliseconds\n", testArray.length, 1, stopWatch.getTime());
+        System.out.printf("Parallel Merge with %d data and %d threshold duration was: %d milliseconds\n", testArray.length, 1, stopWatch.getTime());
         stopWatch.reset();
         checkIfSorted(testArray);
         generateIntegerArray(testArray);
@@ -74,7 +84,7 @@ public class Main {
         stopWatch.start();
         pool.invoke(new Sorting<>(testArray, 16));
         stopWatch.stop();
-        System.out.printf("Parallel Merge with %d data and %d threshold was duration was: %d miliseconds\n", testArray.length, 16, stopWatch.getTime());
+        System.out.printf("Parallel Merge with %d data and %d thresholds duration was: %d milliseconds\n", testArray.length, 16, stopWatch.getTime());
         stopWatch.reset();
         checkIfSorted(testArray);
         generateIntegerArray(testArray);
@@ -83,7 +93,7 @@ public class Main {
         stopWatch.start();
         pool.invoke(new Sorting<>(testArray, 100));
         stopWatch.stop();
-        System.out.printf("Parallel Merge with %d data and %d threshold was duration was: %d miliseconds \n", testArray.length, 100, stopWatch.getTime());
+        System.out.printf("Parallel Merge with %d data and %d thresholds duration was: %d milliseconds \n", testArray.length, 100, stopWatch.getTime());
         stopWatch.reset();
         checkIfSorted(testArray);
         generateIntegerArray(testArray);
@@ -92,7 +102,7 @@ public class Main {
         stopWatch.start();
         pool.invoke(new Sorting<>(testArray, 500));
         stopWatch.stop();
-        System.out.printf("Parallel Merge with %d data and %d threshold was duration was: %d miliseconds\n", testArray.length, 500, stopWatch.getTime());
+        System.out.printf("Parallel Merge with %d data and %d thresholds duration was: %d milliseconds\n", testArray.length, 500, stopWatch.getTime());
         stopWatch.reset();
         checkIfSorted(testArray);
         System.out.println();
@@ -133,5 +143,61 @@ public class Main {
         }
 
         System.out.println(array[array.length-1]);
+    }
+
+    private static void mergeSort(Integer[] array) {
+        mergeSort(array, 0, array.length-1);
+    }
+
+    private static void mergeSort(Integer[] array, int leftPointer, int rightPointer) {
+        if (leftPointer < rightPointer) {
+            int middle = (rightPointer + leftPointer) / 2;
+            mergeSort(array, leftPointer, middle);
+            mergeSort(array, middle+1, rightPointer);
+            // Do all the merge
+            merge(array, middle, leftPointer, rightPointer);
+        }
+    }
+
+    private static void merge(Integer[] array, int middle, int leftPointer, int rightPointer) {
+        // Establish the sizes because they are going to be used a lot
+        int sizeLeft = (middle - leftPointer) + 1;
+        int sizeRight = rightPointer - middle;
+
+        Integer[] leftArray = new Integer[sizeLeft];
+        Integer[] rightArray = new Integer[sizeRight];
+
+        // Copy the elements to compare them later
+        for (int i = 0; i < sizeLeft; i++) {
+            leftArray[i] = array[leftPointer + i];
+        }
+
+        for (int i = 0; i < sizeRight; i++) {
+            rightArray[i] = array[middle + 1 + i];
+        }
+
+        // Make the pointers for the arrays
+        int i = 0, j = 0;
+        // Make a pointer to the original array
+        int originalIndex = leftPointer;
+
+        // Copy the elements to the original array
+        while (i < sizeLeft && j < sizeRight) {
+
+            if (leftArray[i].compareTo(rightArray[j]) <= 0) {
+                array[originalIndex++] = leftArray[i++];
+            } else {
+                array[originalIndex++] = rightArray[j++];
+            }
+        }
+
+        // Copy the rest of the elements
+        while (i < sizeLeft) {
+            array[originalIndex++] = leftArray[i++];
+        }
+
+        while (j < sizeRight) {
+            array[originalIndex++] = rightArray[j++];
+        }
     }
 }

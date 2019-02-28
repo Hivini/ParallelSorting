@@ -40,7 +40,6 @@ public class Sorting<T extends Comparable<? super T>> extends RecursiveAction {
                 merge(this.array, middle, this.leftPointer, this.rightPointer);
             }
         }
-
     }
 
     private void merge(T[] array, int middle, int leftPointer, int rightPointer) {
