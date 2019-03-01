@@ -60,7 +60,7 @@ public class Main {
     }
 
     private static void runParallelMergeTest(Integer[] testArray) {
-        ForkJoinPool pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() - 1);
+        ForkJoinPool pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
         StopWatch stopWatch = new StopWatch();
 
         stopWatch.start();
@@ -68,7 +68,6 @@ public class Main {
         stopWatch.stop();
         System.out.printf("*** Normal Merge Sort with %d data duration was: %d milliseconds\n", testArray.length, stopWatch.getTime());
         stopWatch.reset();
-        checkIfSorted(testArray);
         generateIntegerArray(testArray);
         System.out.println();
 
